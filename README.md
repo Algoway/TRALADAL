@@ -1,4 +1,4 @@
-# TRALADAL (TRadingView ALert ADApter for aLgoway)
+# TRALADAL (TRadingView ALert ADapter for ALgoway)
 
 TRALADAL is a Pine Script v6 strategy-adapter for TradingView that lets you automate execution via AlgoWay WITHOUT writing JSON manually.
 
