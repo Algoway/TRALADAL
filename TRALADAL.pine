@@ -71,7 +71,6 @@ f_calc_contracts() =>
     else
         qty := os_value
 
-    // Safety
     qty := na(qty) or close <= 0 ? 0.0 : qty
     qty
 
@@ -106,7 +105,7 @@ algoway_exit_full(id, qty) =>
 algoway_exit_basic(id, qty) =>
     '{ "platform_name":"' + platform + '","ticker":"' + syminfo.ticker + '","order_id":"' + id + '","order_action":"flat","order_contracts":"' + qty + '" }'
 
-// Keep the same simplistic support flag (as before)
+// cTrader uses the basic payload without risk fields
 supports_risk = platform != "ctrader"
 
 //====================
@@ -258,13 +257,12 @@ exitShortLvl = input.float(0.0, "Level", step=0.1, group=esg)
 
 
 
-// оставляем как было (пока не трогаем)
 flip_on_opposite = input.bool(true, "Flip on opposite entry signal", group="EXITS (optional)",
      tooltip="ON: opposite entry closes current position and opens the other direction.")
 
 
 //====================
-// Build conditions (NO short-circuit warnings) + ONE-condition exits
+// Build conditions
 //====================
 
 // --- ENTRIES raw (always evaluated) ---
@@ -288,7 +286,6 @@ shortFire = shortCond and not shortCond[1]
 exitLongRaw  = f_eval(exitLongMode,  exitLongA,  exitLongB,  exitLongLvl)
 exitShortRaw = f_eval(exitShortMode, exitShortA, exitShortB, exitShortLvl)
 
-// Enable gate AFTER calculation (removes warning)
 exitLongCond  = exitLongEnable  ? exitLongRaw  : false
 exitShortCond = exitShortEnable ? exitShortRaw : false
 
@@ -436,7 +433,7 @@ if rm_strategy and aw_enabled and pos_prev_flat != 0 and pos_now_flat == 0 and n
 // TP/SL/FL labels (custom)
 // TP = lime, SL/TSL = fuchsia, FL = blue
 // FL appears ONLY when exit happened via your Exit Event (strategy.close)
-// FIX: handle reversals (Long->Short / Short->Long) when flip is enabled
+// Handle reversals when position direction changes
 //====================
 
 var float g_stop_active = na
